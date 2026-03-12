@@ -10,6 +10,8 @@ export const verificarToken = (req, res, next) => {
     }
 
     const token = authHeader.split(' ')[1];
+    console.log("Token recibido:", token);/* Muestra el token */
+    console.log("JWT_SECRET usado:", process.env.JWT_SECRET ? "existe" : "NO existe");/* Muestra el JWT_SECRET */
 
     try {
         const verificado = jwt.verify(token, process.env.JWT_SECRET);
