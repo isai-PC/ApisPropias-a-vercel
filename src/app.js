@@ -11,7 +11,7 @@ import MsVsPEroutes from './routes/misvisroutes.js'
 import categorias from './routes/categorias.routes.js'
 import terminos from './routes/terminos.routers.js'
 /* Parte Publica */
-import contactoView from './routes/contactoView.js'
+import contactoView from './routes/contacto.routes.js'
 
 /* ========================Hechos por isai=================== */
 
@@ -44,7 +44,7 @@ app.use('/api/misvis', MsVsPEroutes);
 app.use('/api/categorias', categorias);
 app.use('/api/terminos', terminos);
 /* Parte Publica */
-app.use('/api/contactoView', contactoView);
+app.use('/api/contacto', contactoView);
 
 
 
