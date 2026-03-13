@@ -1,8 +1,9 @@
-import { Router } from "express";
-import * as ctrl from "../controllers/contactoView.controladores.js";
+import { Router } from 'express';
+import * as ctrl from '../controllers/contacto.controladores.js';
 
 const router = Router();
 
-router.get("/", ctrl.obtenerContactoView);
+// Ruta pública - cualquiera puede ver los datos de contacto
+router.get('/', ctrl.contactoView);
 
 export default router;
