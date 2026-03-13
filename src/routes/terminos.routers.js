@@ -4,7 +4,7 @@ import { verificarToken } from '../middlewares/auth.middleware.js';
 
 const router = Router();
 /*  */
-router.get('/',  ctrl.obtenerTerminosActivos); /* Visualizar */
+router.get('/', verificarToken, ctrl.obtenerTerminosActivos); /* Visualizar */
 router.put('/', verificarToken, ctrl.ActualizarTerminos);/* PARTE PRIVADA */
 
 export default router;
