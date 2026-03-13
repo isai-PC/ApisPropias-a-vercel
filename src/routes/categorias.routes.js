@@ -5,7 +5,7 @@ import { verificarToken } from '../middlewares/auth.middleware.js'; // ← PROTE
 const router = Router();
 
 // Todas las rutas privadas (requieren JWT)
-router.get('/', verificarToken, ctrl.obtenerCategorias);
+router.get('/', ctrl.obtenerCategorias);
 router.get('/:id', verificarToken, ctrl.obtenerCategoriaPorId);
 router.post('/', verificarToken, ctrl.crearCategoria);
 router.put('/:id', verificarToken, ctrl.actualizarCategoria);
