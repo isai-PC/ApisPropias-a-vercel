@@ -6,9 +6,14 @@ import gruposroutes from './routes/gruposroutes.js'
 import productosroutes from './routes/productos.routes.js'
 import MsVsPEroutes from './routes/misvisroutes.js'
 
-/* mios */
+/* ========================Hechos por isai===================7 */
+/* Parte Privada */
 import categorias from './routes/categorias.routes.js'
 import terminos from './routes/terminos.routers.js'
+/* Parte Publica */
+import contactoView from './routes/contactoView.js'
+
+/* ========================Hechos por isai=================== */
 
 
 
@@ -34,9 +39,16 @@ app.use('/api/grupos', gruposroutes)
 app.use('/api/productos', productosroutes);
 
 app.use('/api/misvis', MsVsPEroutes);
-/* mios */
+/* ========================Hechos por isai===================7 */
+/* Parte Privada */
 app.use('/api/categorias', categorias);
 app.use('/api/terminos', terminos);
+/* Parte Publica */
+app.use('/api/contactoView', contactoView);
+
+
+
+/* ========================Hechos por isai=================== */
 
 app.get('/', (req, res)=>{
     res.send("Esta es mi primera vez se gentil")
