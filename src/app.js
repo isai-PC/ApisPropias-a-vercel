@@ -5,7 +5,11 @@ import cors from 'cors'; // IMPORTANTE Importar
 import gruposroutes from './routes/gruposroutes.js'
 import productosroutes from './routes/productos.routes.js'
 import MsVsPEroutes from './routes/misvisroutes.js'
+
+/* mios */
 import categorias from './routes/categorias.routes.js'
+import terminos from './routes/terminos.routers.js'
+
 
 
 //crear el objeto de express para nuestra alicacion 
@@ -30,8 +34,9 @@ app.use('/api/grupos', gruposroutes)
 app.use('/api/productos', productosroutes);
 
 app.use('/api/misvis', MsVsPEroutes);
-
+/* mios */
 app.use('/api/categorias', categorias);
+app.use('/api/terminos', terminos);
 
 app.get('/', (req, res)=>{
     res.send("Esta es mi primera vez se gentil")
