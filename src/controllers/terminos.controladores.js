@@ -1,8 +1,8 @@
 import * as terminosModel from '../models/terminos.model.js'
 import * as validar from '../utils/validaciones.js'
 
-/* PUBLICO( NO SE SI MME TODCA ESTO XD) */
-/* export const obtenerTerminosActivos = async (req, res) => {
+/* Visualizar*/
+export const obtenerTerminosActivos = async (req, res) => {
     try {
         const terminos = await terminosModel.obtenerTerminosActivos();
         if (!terminos) return res.status(404).json({ error: "Terminos no encontrados" });
@@ -10,7 +10,7 @@ import * as validar from '../utils/validaciones.js'
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-} */
+}
 /* ==================== SUBIR ACTUALIZACION DE TERMINOS =====================    */
 export const ActualizarTerminos = async (req, res) => {
     const { titulo, contenido } = req.body;
