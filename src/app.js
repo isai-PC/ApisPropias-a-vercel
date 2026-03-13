@@ -5,7 +5,7 @@ import cors from 'cors'; // IMPORTANTE Importar
 import gruposroutes from './routes/gruposroutes.js'
 import productosroutes from './routes/productos.routes.js'
 import MsVsPEroutes from './routes/misvisroutes.js'
-import categorias from './routes/categorias.js'
+import categorias from './routes/categorias.routes.js'
 
 
 //crear el objeto de express para nuestra alicacion 
