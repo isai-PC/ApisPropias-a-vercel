@@ -1,6 +1,11 @@
 import db from '../config/db.js'
 
 export const obtenerContactoView = async () => {
-    const [rows] = await db.query(`SELECT * FROM contacto_info;`);
+    const [rows] = await db.query(`
+        SELECT id, dias, horario, telefono, whatsapp, correo, direccion,
+           red_social_1, red_social_2, red_social_3
+    FROM contacto_info
+    LIMIT 1;
+    `);
     return rows
 }

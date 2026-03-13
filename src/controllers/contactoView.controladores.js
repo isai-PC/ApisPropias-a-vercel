@@ -1,10 +1,10 @@
 import * as contactoView from '../models/contactoView.model.js'
 
-export const obtenerContactoView = async () => {
+export const contactroView = async () => {
     try {
         const contacto = await contactoView.obtenerContactoView()
         if (!contacto) {
-            return res.status(404).json({ error: "Lista de contacto no encontrada" });
+            return res.status(404).json({ error: "No hay informacion de contacto" });
         }
         res.status(200).json(contacto);/*  */
     } catch (error) {
