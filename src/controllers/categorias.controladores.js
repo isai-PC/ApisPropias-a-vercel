@@ -42,8 +42,8 @@ export const crearCategoria = async (req, res) => {
 export const actualizarCategoria = async (req, res) => {
   const { nombre_categoria, texto_secundario, imagen_categoria } = req.body;
 
-  if (!esTextoValido(nombre_categoria)) {
-    return res.status(400).json({ error: "Nombre de categoría inválido" });
+  if (!nombre_categoria || !texto_secundario) {
+    return res.status(400).json({ error: "Nombre y descripción son obligatorios" });
   }
 
   try {
@@ -53,9 +53,17 @@ export const actualizarCategoria = async (req, res) => {
       texto_secundario || null,
       imagen_categoria || null
     );
-    if (affected === 0) return res.status(404).json({ error: "Categoría no encontrada" });
-    res.status(200).json({ message: "Categoría actualizada" });
+
+    if (affected === 0) {
+      return res.status(404).json({ error: "Categoría no encontrada" });
+    }
+
+    res.status(200).json({ 
+      message: "Categoría actualizada correctamente" 
+    });
+
   } catch (error) {
+    console.error("Error en actualizarCategoria:", error);
     res.status(500).json({ error: error.message });
   }
 };

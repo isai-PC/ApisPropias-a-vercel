@@ -33,7 +33,8 @@ export const actualizarCategoria = async (id, nombre, textoSecundario, imagen) =
         texto_secundario = ?, 
         imagen_categoria = ? 
     WHERE id_categoria = ?
-  `, [nombre, textoSecundario, imagen, id]);
+  `, [nombre, textoSecundario || null, imagen || null, id]);
+
   return result.affectedRows;
 };
 
