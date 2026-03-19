@@ -2,15 +2,7 @@ import * as grupoModelo from "../models/grupo.model.js";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import * as validar from '../utils/validaciones.js';
-
-//export const obtenerEmpleados = async (req, res) => {
-  //try {
-    //const grupos = await grupoModelo.obtenerEmpleados();
-    //res.status(200).json(grupos);
-  //} catch (error) {
-    //res.status(500).json({ error: error.message });
-  //}
-//};
+import e from "express";
 
 export const obtenerEmpleados = async (req, res) => {
   try {
@@ -46,6 +38,23 @@ export const obtenerEmpleados = async (req, res) => {
   }
 };
 
+export const obtenerEmpleadoPorId = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const empleado = await grupoModelo.obtenerEmpleadoPorId(id);
+
+    if (!validar.esEnteroPositivo(id)) {
+      return res.status(404).json({
+        message: "Empleado no encontrado o id inválido",
+      });
+    }
+
+    res.status(200).json(empleado);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 export const crearEmpleado = async (req, res) => {
   try {
@@ -94,7 +103,17 @@ export const actualizarEmpleado = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const {  nombre,  apaterno,  amaterno,  correo,  telefono,  contrasena,  tipo_usuario,  departamento,  puesto,} = req.body;
+    const {
+      nombre,
+      apaterno,
+      amaterno,
+      correo,
+      telefono,
+      contrasena,
+      tipo_usuario,
+      departamento,
+      puesto,
+    } = req.body;
 
     // Validar ID
     if (!id || isNaN(Number(id)) || Number(id) <= 0) {
@@ -103,8 +122,8 @@ export const actualizarEmpleado = async (req, res) => {
       });
     }
 
-    // Validación básica
-     if (
+    // Validación de campos obligatorios
+    if (
       !validar.esTextoValido(nombre) ||
       !validar.esTextoValido(apaterno) ||
       !validar.esTextoValido(amaterno) ||
@@ -115,12 +134,23 @@ export const actualizarEmpleado = async (req, res) => {
       !validar.esEnteroPositivo(puesto)
     ) {
       return res.status(400).json({
-        message: "Todos los campos exepto la contraseña son obligatorios y deben ser válidos",
+        message: "Todos los campos excepto la contraseña son obligatorios y deben ser válidos",
       });
     }
-    if (contrasena && !validar.esContrasenaValida(contrasena)) {
-  return res.status(400).json({ message: "Contraseña inválida" });
-}
+
+    let passwordHash = null;
+
+    // Si el usuario manda contraseña nueva
+    if (contrasena) {
+      if (!validar.esContrasenaValida(contrasena)) {
+        return res.status(400).json({
+          message: "Contraseña inválida",
+        });
+      }
+
+      const salt = await bcrypt.genSalt(10);
+      passwordHash = await bcrypt.hash(contrasena, salt);
+    }
 
     const empleadoActualizado = await grupoModelo.actualizarEmpleado({
       id,
@@ -129,13 +159,13 @@ export const actualizarEmpleado = async (req, res) => {
       amaterno,
       correo,
       telefono,
-      contrasena,
+      contrasena: passwordHash,
       tipo_usuario,
       departamento,
       puesto,
     });
 
-    // Verificar si existe
+    // Verificar si existe el empleado
     if (empleadoActualizado.affectedRows === 0) {
       return res.status(404).json({
         message: "Empleado no encontrado",
@@ -146,8 +176,11 @@ export const actualizarEmpleado = async (req, res) => {
       message: "Empleado actualizado correctamente",
       data: empleadoActualizado,
     });
+
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+      error: error.message,
+    });
   }
 };
 
@@ -197,5 +230,216 @@ export const login = async (req, res) => {
         res.json({ token, usuario: { id: usuario.Id_Empleado, nombre: `${usuario.Nombre} ${usuario.Apellido_Paterno} ${usuario.Apellido_Materno}`, rol: usuario.Id_Tipo_Usuario } });
     } catch (error) {
         res.status(500).json({ error: 'Error en el proceso de login' });
+    }
+};
+
+
+
+
+export const obtenerDepartamentos = async (req, res) => {
+
+  try {
+
+    const resultado = await grupoModelo.obtenerDepartamentos();
+
+    res.status(200).json({
+      message: "Departamentos obtenidos correctamente",
+      total: resultado.length,
+      data: resultado
+    });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+
+};
+
+
+// ===============================
+// OBTENER PUESTOS
+// ===============================
+export const obtenerPuestos = async (req, res) => {
+
+  try {
+
+    const resultado = await grupoModelo.obtenerPuestos();
+
+    res.status(200).json({
+      message: "Puestos obtenidos correctamente",
+      total: resultado.length,
+      data: resultado
+    });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+
+};
+
+
+export const obtenerTiposUsuario = async (req, res) => {
+
+  try {
+
+    const resultado = await grupoModelo.obtenerTiposUsuario();
+
+    res.status(200).json({
+      message: "Tipos de usuario obtenidos correctamente",
+      total: resultado.length,
+      data: resultado
+    });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+
+};
+
+
+// ===============================
+// OBTENER PUESTO Y DEPARTAMENTO
+// DE UN EMPLEADO
+// ===============================
+export const obtenerEmpleadoValue = async (req, res) => {
+
+  try {
+
+    const { id } = req.params;
+
+    if (!validar.esEnteroPositivo(id)) {
+      return res.status(400).json({
+        message: "El id debe ser un número entero positivo"
+      });
+    }
+
+    const resultado = await grupoModelo.obtenerEmpleadoValue(id);
+
+    if (resultado.length === 0) {
+      return res.status(404).json({
+        message: "Empleado no encontrado"
+      });
+    }
+
+    res.status(200).json({
+      message: "Empleado obtenido correctamente",
+      data: resultado[0]
+    });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+
+};
+
+export const reporteEmpleado = async (req, res) => {
+
+  try {
+    const { id, inicio, fin } = req.query;
+
+    if (!validar.esEnteroPositivo(id)) {
+      return res.status(400).json({
+        message: "El id debe ser un número entero positivo"
+      });
+    };
+    const reporte = await grupoModelo.reporteEmpleado(id, inicio, fin);
+
+    res.status(200).json({
+      id, 
+      inicio,
+      fin,
+      reporte
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
+
+export const reporteDepartamento = async (req, res) => {
+
+  try {
+    const { id, inicio, fin } = req.query;
+
+    if (!validar.esEnteroPositivo(id)) {
+      return res.status(400).json({
+        message: "El id debe ser un número entero positivo"
+      });
+    };
+    const reporte = await grupoModelo.reporteDepartamento(id, inicio, fin);
+
+    res.status(200).json({
+      id, 
+      inicio,
+      fin,
+      reporte
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+/* ===============================
+ GOOGLE LOGIN
+ =============================== */
+ const { OAuth2Client } = require('google-auth-library');
+const jwt = require('jsonwebtoken');
+const grupoModelo = require('../models/grupo.model.js'); // ajusta el path real de tu modelo
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+export const googleLogin = async (req, res) => {
+    try {
+        const { id_token } = req.body;
+        if (!id_token) {
+            return res.status(400).json({ message: 'Token de Google requerido' });
+        }
+
+        // Verificar token con Google
+        const ticket = await client.verifyIdToken({
+            idToken: id_token,
+            audience: process.env.GOOGLE_CLIENT_ID,  // Obligatorio
+        });
+
+        const payload = ticket.getPayload();
+        if (!payload || !payload.email || !payload.email_verified) {
+            return res.status(401).json({ message: 'Token de Google inválido o email no verificado' });
+        }
+
+        const email = payload.email;
+
+        // Buscar usuario en TU BD
+        const usuario = await grupoModelo.findUsuarioByEmail(email);
+        if (!usuario) {
+            return res.status(401).json({ 
+                message: 'Correo no registrado en nuestro sistema. Usa tu usuario y contraseña primero.' 
+            });
+        }
+
+        // Generar TU token JWT (igual que en login normal)
+        const token = jwt.sign(
+            { 
+                id: usuario.Id_Empleado, 
+                email: usuario.Correo, 
+                rol: usuario.Id_Tipo_Usuario 
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '8h' }
+        );
+
+        const nombre = `${usuario.Nombre} ${usuario.Apellido_Paterno} ${usuario.Apellido_Materno}`;
+
+        res.json({ 
+            token, 
+            usuario: { 
+                id: usuario.Id_Empleado, 
+                nombre, 
+                rol: usuario.Id_Tipo_Usuario 
+            } 
+        });
+    } catch (error) {
+        console.error('Error en googleLogin:', error);
+        if (error.message.includes('Invalid')) {
+            return res.status(401).json({ message: 'Token de Google no válido' });
+        }
+        res.status(500).json({ message: 'Error interno en login con Google' });
     }
 };
