@@ -378,11 +378,10 @@ export const reporteDepartamento = async (req, res) => {
   }
 }
 /* ===============================
- GOOGLE LOGIN
- =============================== */
- const { OAuth2Client } = require('google-auth-library');
-const jwt = require('jsonwebtoken');
-const grupoModelo = require('../models/grupo.model.js'); // ajusta el path real de tu modelo
+   GOOGLE LOGIN
+   =============================== */
+
+import { OAuth2Client } from 'google-auth-library';
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -393,10 +392,9 @@ export const googleLogin = async (req, res) => {
             return res.status(400).json({ message: 'Token de Google requerido' });
         }
 
-        // Verificar token con Google
         const ticket = await client.verifyIdToken({
             idToken: id_token,
-            audience: process.env.GOOGLE_CLIENT_ID,  // Obligatorio
+            audience: process.env.GOOGLE_CLIENT_ID,
         });
 
         const payload = ticket.getPayload();
@@ -406,7 +404,6 @@ export const googleLogin = async (req, res) => {
 
         const email = payload.email;
 
-        // Buscar usuario en TU BD
         const usuario = await grupoModelo.findUsuarioByEmail(email);
         if (!usuario) {
             return res.status(401).json({ 
@@ -414,7 +411,6 @@ export const googleLogin = async (req, res) => {
             });
         }
 
-        // Generar TU token JWT (igual que en login normal)
         const token = jwt.sign(
             { 
                 id: usuario.Id_Empleado, 
@@ -437,7 +433,7 @@ export const googleLogin = async (req, res) => {
         });
     } catch (error) {
         console.error('Error en googleLogin:', error);
-        if (error.message.includes('Invalid')) {
+        if (error.message?.includes('Invalid')) {
             return res.status(401).json({ message: 'Token de Google no válido' });
         }
         res.status(500).json({ message: 'Error interno en login con Google' });
