@@ -217,9 +217,9 @@ export const login = async (req, res) => {
         const { correo, contrasena } = req.body;
         const usuario = await grupoModelo.findUsuarioByEmail(correo);
 
-        console.log("📌 Usuario encontrado:", usuario);           // ← ver en logs de Vercel
-        console.log("📌 Contraseña recibida:", contrasena);
-        console.log("📌 Hash guardado en BD:", usuario?.Contrasena);
+        console.log("Usuario encontrado:", usuario);           // ← ver en logs de Vercel
+        console.log("Contraseña recibida:", contrasena);
+        console.log("Hash guardado en BD:", usuario?.Contrasena);
 
         if (!usuario) return res.status(401).json({ message: 'Credenciales inválidas' });
 
